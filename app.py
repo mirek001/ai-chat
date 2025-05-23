@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, session
+from flask import Flask, request, render_template, session, jsonify
 
 import requests
 
@@ -44,7 +44,7 @@ def messages():
             except Exception as exc:
                 reply = f"Error: {exc}"
             session['history'].append({'role': 'assistant', 'content': reply})
-    return {'history': session['history']}
+    return jsonify(history=session['history'])
 
 
 
