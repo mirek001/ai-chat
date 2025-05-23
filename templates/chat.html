@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>AI Chat</title>
+  </head>
+  <body>
+    <h1>AI Chat</h1>
+    <div id="chat">
+      {% for msg in history %}
+        <p><strong>{{ msg.role }}:</strong> {{ msg.content }}</p>
+      {% endfor %}
+    </div>
+    <form method="post">
+      <input type="text" name="message" autofocus required>
+      <input type="submit" value="Send">
+    </form>
+  </body>
+</html>
