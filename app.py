@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, session
+
 import requests
 
 app = Flask(__name__)
@@ -37,12 +38,14 @@ def messages():
         text = data.get('message', '').strip()
         if text:
             session['history'].append({'role': 'user', 'content': text})
+
             try:
                 reply = query_ollama(session['history'])
             except Exception as exc:
                 reply = f"Error: {exc}"
             session['history'].append({'role': 'assistant', 'content': reply})
     return {'history': session['history']}
+
 
 
 if __name__ == '__main__':
