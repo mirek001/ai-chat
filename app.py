@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template, session, redirect, url_for
+from flask import Flask, request, render_template, session
+
 import requests
 
 app = Flask(__name__)
@@ -21,21 +22,30 @@ def query_ollama(history):
     return message.get("content", "")
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def chat():
     if 'history' not in session:
         session['history'] = []
+    return render_template('chat.html', history=session['history'])
+
+
+@app.route('/api/messages', methods=['GET', 'POST'])
+def messages():
+    if 'history' not in session:
+        session['history'] = []
     if request.method == 'POST':
-        text = request.form.get('message', '').strip()
+        data = request.get_json() or {}
+        text = data.get('message', '').strip()
         if text:
-            session['history'].append({"role": "user", "content": text})
+            session['history'].append({'role': 'user', 'content': text})
+
             try:
                 reply = query_ollama(session['history'])
             except Exception as exc:
                 reply = f"Error: {exc}"
-            session['history'].append({"role": "assistant", "content": reply})
-        return redirect(url_for('chat'))
-    return render_template('chat.html', history=session['history'])
+            session['history'].append({'role': 'assistant', 'content': reply})
+    return {'history': session['history']}
+
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 # AI Chat
 
-This is a simple Flask web application that connects to an Ollama server to provide an AI chat using the **mistral** model.
+This is a simple Flask web application that connects to an Ollama server to provide an AI chat using the **mistral** model. The web page automatically refreshes the conversation every few seconds and sends messages without reloading the page.
 
 ## Requirements
 
