@@ -17,3 +17,15 @@ Use the provided `run.sh` script to set up a virtual environment, install depend
 ```
 
 By default the application expects an Ollama server running at `http://127.0.0.1:11434`.
+
+## Desktop GUI
+
+In addition to the web interface a simple desktop GUI is available. Once the
+dependencies are installed you can run it with:
+
+```bash
+python3 gui.py
+```
+
+The GUI communicates with the same Ollama server and displays the conversation
+in a scrollable window.
