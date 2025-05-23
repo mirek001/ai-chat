@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Ollama Chat</title>
+    <style>
+        #conversation { height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 0.5em; }
+        #conversation p { margin: 0 0 0.5em; }
+    </style>
+</head>
+<body>
+    <h1>Ollama Chat</h1>
+    <div id="conversation">
+        {% for m in history %}
+          <p><strong>{{ m.role }}:</strong> {{ m.content }}</p>
+        {% endfor %}
+    </div>
+    <form id="form">
+        <input id="message" autocomplete="off" required>
+        <button type="submit">Send</button>
+    </form>
+    <script>
+        async function refresh() {
+            const resp = await fetch('/chat');
+            const data = await resp.json();
+            const div = document.getElementById('conversation');
+            div.innerHTML = '';
+            for (const m of data.history) {
+                const p = document.createElement('p');
+                p.innerHTML = '<strong>' + m.role + ':</strong> ' + m.content;
+                div.appendChild(p);
+            }
+            div.scrollTop = div.scrollHeight;
+        }
+
+        async function send(e) {
+            e.preventDefault();
+            const input = document.getElementById('message');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+            await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({message: text})
+            });
+            refresh();
+        }
+
+        document.getElementById('form').addEventListener('submit', send);
+        setInterval(refresh, 5000);
+    </script>
+</body>
+</html>
