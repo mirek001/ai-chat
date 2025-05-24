@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Simple Ollama Frontend</title>
+    <style>
+        #conversation { height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 0.5em; }
+        #conversation p { margin: 0 0 0.5em; }
+    </style>
+</head>
+<body>
+    <h1>Ollama Frontend</h1>
+    <div id="conversation"></div>
+    <form id="form">
+        <input id="message" autocomplete="off" required>
+        <button type="submit">Send</button>
+    </form>
+    <script>
+        const API_URL = 'http://127.0.0.1:11434/api/chat';
+        const MODEL = 'mistral';
+        const history = [];
+
+        async function send(e) {
+            e.preventDefault();
+            const input = document.getElementById('message');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+            history.push({role: 'user', content: text});
+            update();
+            const payload = {model: MODEL, messages: history, stream: false};
+            try {
+                const resp = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await resp.json();
+                const reply = (data.message && data.message.content) || '';
+                history.push({role: 'assistant', content: reply});
+            } catch (err) {
+                history.push({role: 'assistant', content: 'Error: ' + err});
+            }
+            update();
+        }
+
+        function update() {
+            const div = document.getElementById('conversation');
+            div.innerHTML = '';
+            for (const m of history) {
+                const p = document.createElement('p');
+                p.innerHTML = '<strong>' + m.role + ':</strong> ' + m.content;
+                div.appendChild(p);
+            }
+            div.scrollTop = div.scrollHeight;
+        }
+
+        document.getElementById('form').addEventListener('submit', send);
+    </script>
+</body>
+</html>
