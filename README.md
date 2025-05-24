@@ -32,4 +32,4 @@ in a scrollable window.
 
 ## Standalone Frontend Example
 
-A very minimal HTML page that communicates directly with the Ollama API is included as `simple_frontend.html`. You can open this file in your browser (no server required) while the Ollama server is running. The page sends requests to `http://127.0.0.1:11434/api/chat` and displays the conversation locally.
+A very minimal HTML page that communicates directly with the Ollama API is included as `simple_frontend.html`. It is now also served by the Flask app at `/simple`, and a navigation menu links to it from the main chat page. You can open this file directly in your browser (no server required) or access it through the running Flask application. The page sends requests to `http://127.0.0.1:11434/api/chat` and displays the conversation locally.

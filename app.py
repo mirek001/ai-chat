@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, session, jsonify
+from flask import Flask, request, render_template, session, jsonify, send_file
 import requests
 
 app = Flask(__name__)
@@ -42,6 +42,12 @@ def chat():
                 reply = f'Error: {exc}'
             session['history'].append({'role': 'assistant', 'content': reply})
     return jsonify(history=session['history'])
+
+
+@app.route('/simple')
+def simple_frontend():
+    """Serve the standalone simple frontend page."""
+    return send_file('simple_frontend.html')
 
 
 if __name__ == '__main__':
