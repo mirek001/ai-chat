@@ -33,3 +33,5 @@ in a scrollable window.
 ## Standalone Frontend Example
 
 A very minimal HTML page is included as `simple_frontend.html` and served by the Flask app at `/simple`. When used through the Flask server the conversation is persisted in a local SQLite database. The page communicates with the endpoints `/simple/chat` and `/simple/history` provided by the application.
+
+On startup the application ensures the `messages` table contains a `chat_id` column. If this column is added to an existing database, earlier rows will have their `chat_id` set to `default` unless you update them manually.
