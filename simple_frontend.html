@@ -20,9 +20,16 @@
         <button type="submit">Send</button>
     </form>
     <script>
-        const API_URL = 'http://127.0.0.1:11434/api/chat';
-        const MODEL = 'mistral';
-        const history = [];
+        const CHAT_URL = '/simple/chat';
+        const HISTORY_URL = '/simple/history';
+        let history = [];
+
+        async function loadHistory() {
+            const resp = await fetch(HISTORY_URL);
+            const data = await resp.json();
+            history = data.history;
+            update();
+        }
 
         async function send(e) {
             e.preventDefault();
@@ -30,18 +37,14 @@
             const text = input.value.trim();
             if (!text) return;
             input.value = '';
-            history.push({role: 'user', content: text});
-            update();
-            const payload = {model: MODEL, messages: history, stream: false};
             try {
-                const resp = await fetch(API_URL, {
+                const resp = await fetch(CHAT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({message: text})
                 });
                 const data = await resp.json();
-                const reply = (data.message && data.message.content) || '';
-                history.push({role: 'assistant', content: reply});
+                history = data.history;
             } catch (err) {
                 history.push({role: 'assistant', content: 'Error: ' + err});
             }
@@ -60,6 +63,7 @@
         }
 
         document.getElementById('form').addEventListener('submit', send);
+        loadHistory();
     </script>
 </body>
 </html>
