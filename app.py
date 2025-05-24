@@ -2,12 +2,9 @@ from flask import Flask, request, render_template, session, jsonify, send_file
 import requests
 import sqlite3
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'change-me'
-
+DB_PATH = 'chat_history.db'
 OLLAMA_URL = 'http://127.0.0.1:11434/api/chat'
 MODEL = 'mistral'
-DB_PATH = 'chat_history.db'
 
 
 def init_db():
@@ -15,10 +12,20 @@ def init_db():
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute(
-        'CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, chat_id TEXT, role TEXT, content TEXT)'
+        "CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, chat_id TEXT DEFAULT 'default', role TEXT, content TEXT)"
     )
+    c.execute("PRAGMA table_info(messages)")
+    cols = [row[1] for row in c.fetchall()]
+    if 'chat_id' not in cols:
+        c.execute("ALTER TABLE messages ADD COLUMN chat_id TEXT DEFAULT 'default'")
     conn.commit()
     conn.close()
+
+
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'change-me'
+init_db()
 
 
 def get_history(chat_id='default'):
@@ -105,10 +112,6 @@ def simple_chat_api():
         add_message(chat_id, 'assistant', reply)
     return jsonify(history=get_history(chat_id))
 
-
-# Initialize the database when the module is imported so that the application
-# works regardless of how it is started (e.g. using ``flask run``).
-init_db()
 
 if __name__ == '__main__':
     app.run(debug=True)
