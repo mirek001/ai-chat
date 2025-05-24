@@ -106,6 +106,9 @@ def simple_chat_api():
     return jsonify(history=get_history(chat_id))
 
 
+# Initialize the database when the module is imported so that the application
+# works regardless of how it is started (e.g. using ``flask run``).
+init_db()
+
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True)
