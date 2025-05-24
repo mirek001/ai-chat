@@ -29,3 +29,7 @@ python3 gui.py
 
 The GUI communicates with the same Ollama server and displays the conversation
 in a scrollable window.
+
+## Standalone Frontend Example
+
+A very minimal HTML page that communicates directly with the Ollama API is included as `simple_frontend.html`. You can open this file in your browser (no server required) while the Ollama server is running. The page sends requests to `http://127.0.0.1:11434/api/chat` and displays the conversation locally.
